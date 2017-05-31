@@ -1,16 +1,21 @@
 language: node_js
-node_js:
-  - "4"
-  - "6"
-  - "8"
+node_js: [4, 6, 8]
 
 os: [linux, osx]
 dist: trusty
 sudo: required
 
-# by caching the npm local cache, instead of ./node_modules,
-# we theoretically avoid accidentally having npm keep around
-# old modules in the tree
+env:
+  - TEST=jest
+  - EXAMPLE=client-only-paths
+  - EXAMPLE=gatsbygram
+  - EXAMPLE=hn
+  - EXAMPLE=image-processing
+  - EXAMPLE=no-plugins
+  - EXAMPLE=no-trailing-slashes
+  - EXAMPLE=using-drupal
+  - EXAMPLE=using-postcss-sass
+
 cache:
   directories:
     - $(npm config get cache)
@@ -22,4 +27,15 @@ install:
   - npm install
 
 script:
-  - npm test
+  # only run the overall test script on one build
+  - test $TEST && npm test
+
+  # for all the others, install/test their site
+  - test $TEST && npm test
+  - test $EXAMPLE && npm install -g gatsby-dev-cli@canary
+  - test $EXAMPLE && cd "examples/$EXAMPLE"
+  - test $EXAMPLE && npm install
+  - test $EXAMPLE && gatsby-dev --set-path-to-repo ../..
+  - test $EXAMPLE && gatsby-dev --scan-once
+  - test $EXAMPLE && npm test
+  - test $EXAMPLE && npm run build
