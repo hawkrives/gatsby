@@ -28,14 +28,13 @@ install:
 
 script:
   # only run the overall test script on one build
-  - test $TEST && npm test
+  - if [[ $TEST ]]; then npm test; fi
 
   # for all the others, install/test their site
-  - test $TEST && npm test
-  - test $EXAMPLE && npm install -g gatsby-dev-cli@canary
-  - test $EXAMPLE && cd "examples/$EXAMPLE"
-  - test $EXAMPLE && npm install
-  - test $EXAMPLE && gatsby-dev --set-path-to-repo ../..
-  - test $EXAMPLE && gatsby-dev --scan-once
-  - test $EXAMPLE && npm test
-  - test $EXAMPLE && npm run build
+  - if [[ $EXAMPLE ]]; then npm install -g gatsby-dev-cli@canary; fi
+  - if [[ $EXAMPLE ]]; then cd "examples/$EXAMPLE"; fi
+  - if [[ $EXAMPLE ]]; then npm install; fi
+  - if [[ $EXAMPLE ]]; then gatsby-dev --set-path-to-repo ../..; fi
+  - if [[ $EXAMPLE ]]; then gatsby-dev --scan-once; fi
+  - if [[ $EXAMPLE ]]; then npm test; fi
+  - if [[ $EXAMPLE ]]; then npm run build; fi
